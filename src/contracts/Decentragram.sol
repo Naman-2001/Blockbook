@@ -46,17 +46,17 @@ contract Decentragram {
 
   function tipImageOwner(uint _id)public payable {
 
-    require( _id > 0 && _id <= imageCount)
+    require( _id > 0 && _id <= imageCount);
 
       Image memory _image = images[_id];
       
       address payable _author = _image.author;
 
       address(_author).transfer(msg.value);
-      _image.tipAmount = _image.timAmount + msg.value;
+      _image.tipAmount = _image.tipAmount + msg.value;
 
       images[_id] = _image;
 
-      emit ImageTipped(_id, _image.hash, _image.description, _image.tipAmount,_author)
+      emit ImageTipped(_id, _image.hash, _image.description, _image.tipAmount,_author);
   }
 }
