@@ -50,6 +50,15 @@ function App() {
 
       const imagesCount = await decentragram.methods.imageCount().call();
       setImageCount(imagesCount);
+      console.log(imagesCount);
+
+      for (let i = 1; i <= imagesCount; i++) {
+        const image = await decentragram.methods.images(i).call();
+        setImages((prev) => {
+          return [...prev, image];
+        });
+      }
+
       setLoading(false);
     } else {
       window.alert("Decentagram contract not deploed to detected network");
@@ -83,15 +92,25 @@ function App() {
       }
       console.log("Ipfs result", result);
 
-      // setLoading(true);
-      // decentragram.methods
-      //   .uploadImage(result[0].hash, desc)
-      //   .send({ from: account })
-      //   .on("transactionHash", (hash) => {
-      //     setLoading(false);
-      //     console.log(hash);
-      //   });
+      setLoading(true);
+      decentragram.methods
+        .uploadImage(result[0].hash, desc)
+        .send({ from: account })
+        .on("transactionHash", (hash) => {
+          setLoading(false);
+          console.log(hash);
+        });
     });
+  };
+
+  const tipImageOwner = (id, tipAmount) => {
+    setLoading(true);
+    decentragram.methods
+      .tipImageOwner(id)
+      .send({ from: account, value: tipAmount })
+      .on("transactionHash", (hash) => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -102,7 +121,12 @@ function App() {
           <p>Loading...</p>
         </div>
       ) : (
-        <Main captureFile={captureFile} uploadImage={uploadImage} />
+        <Main
+          images={images}
+          captureFile={captureFile}
+          uploadImage={uploadImage}
+          tipImageOwner={tipImageOwner}
+        />
       )}
     </div>
   );
